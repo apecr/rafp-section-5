@@ -1,0 +1,26 @@
+{
+  "name": "rafp-section-5",
+  "version": "1.0.0",
+  "description": "Introduction to Flask-Restful library with an item API.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "install": "source venv/bin/activate && pip install -r requirements.txt",
+    "start": "npm install && python create_tables.py && python app.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apecr/rafp-section-5.git"
+  },
+  "keywords": [
+    "python"
+  ],
+  "author": "Alberot Eyo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/apecr/rafp-section-5/issues"
+  },
+  "homepage": "https://github.com/apecr/rafp-section-5#readme"
+}
