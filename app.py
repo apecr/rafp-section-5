@@ -13,14 +13,11 @@ items = []
 jwt = JWT(app, authenticate, identity)  # /auth
 
 
-
-
 def get_item_by_name(name):
     return next(filter(lambda x: x['name'] == name, items), None)
 
 
 class Item(Resource):
-
     parser = reqparse.RequestParser()
     parser.add_argument('price',
                         type=float,
