@@ -87,7 +87,7 @@ class Item(Resource):
     def put(self, name):
         data = Item.parser.parse_args()
 
-        item = self.find_by_name(data['name'])
+        item = self.find_by_name(name)
         updated_item = {'name': name, 'price': data['price']}
         try:
             if not item:
@@ -101,4 +101,17 @@ class Item(Resource):
 
 class ItemList(Resource):
     def get(self):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM items"
+        result = cursor.execute(query)
+        items = []
+        for row in result:
+            items.append({
+                'name': row[0],
+                'price': row[1]
+            })
+        connection.close()
+
         return {'items': items}
