@@ -35,13 +35,9 @@ class Item(Resource):
             return {"item": {"name": row[0], 'price': row[1]}}
         return {'message': 'Item not found'}, 404
 
-    def post(self, name):
-        if self.find_by_name(name):
-            return {'message': 'item {} already created'.format(name)}, 400
+    @classmethod
+    def insert(cls, item):
 
-        data = Item.parser.parse_args()
-
-        item = {'name': name, 'price': data['price']}
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
@@ -50,6 +46,18 @@ class Item(Resource):
 
         connection.commit()
         connection.close()
+
+    def post(self, name):
+        if self.find_by_name(name):
+            return {'message': 'item {} already created'.format(name)}, 400
+
+        data = Item.parser.parse_args()
+        item = {'name': name, 'price': data['price']}
+
+        try:
+            self.insert(item)
+        except:
+            return {"message": "An error occured inserting the item."}, 500
 
         return item, 201
 
@@ -62,19 +70,33 @@ class Item(Resource):
 
         connection.commit()
         connection.close()
-        
+
         return {'message': 'Item deleted'}
+
+    @classmethod
+    def update(cls, item):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "UPDATE items SET price = ? WHERE name = ?"
+        cursor.execute(query, (item['price'], item['name']))
+
+        connection.commit()
+        connection.close()
 
     def put(self, name):
         data = Item.parser.parse_args()
 
-        item = next(filter(lambda x: x['name'] == name, items), None)
-        if not item:
-            item = {'name': name, 'price': data['price']}
-            items.append(item)
-        else:
-            item.update(data)
-        return item
+        item = self.find_by_name(data['name'])
+        updated_item = {'name': name, 'price': data['price']}
+        try:
+            if not item:
+                self.insert(updated_item)
+            else:
+                self.update(updated_item)
+        except:
+            return {"message": "An error occured updating the item."}, 500
+        return updated_item
 
 
 class ItemList(Resource):
